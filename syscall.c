@@ -17,7 +17,10 @@
 int
 fetchint(uint addr, int *ip)
 {
-  if(addr >= proc->sz || addr+4 > proc->sz ) //check addr against sz + PGSIZE instead? or is sz okay?
+  if (proc->pid != 1 && addr<PGSIZE){
+    return -1; //invalid if it's something other than pid 1 and the addr is within first page
+  }
+  if(addr >= proc->sz || addr+4 > proc->sz )
     return -1;
   *ip = *(int*)(addr);
   return 0;
@@ -31,7 +34,10 @@ fetchstr(uint addr, char **pp)
 {
   char *s, *ep;
 
-  if(addr >= proc->sz) //should sz already be okay? or add PGSIZE before check?
+  if (proc -> pid != 1 && addr<PGSIZE){ //check if it isn't pid 1, addr can't be less than PGSIZE
+    return -1;
+  }
+  if(addr >= proc->sz)
     return -1;
   *pp = (char*)addr;
   ep = (char*)proc->sz;
@@ -58,7 +64,10 @@ argptr(int n, char **pp, int size)
   
   if(argint(n, &i) < 0)
     return -1;
-  if((uint)i >= proc->sz || (uint)i+size > proc->sz) //add PGSIZE before checking this?
+  if(proc->pid != 1 && (uint)i < PGSIZE){
+    return -1;
+  }
+  if((uint)i >= proc->sz || (uint)i+size > proc->sz)
     return -1;
   *pp = (char*)i;
   return 0;
