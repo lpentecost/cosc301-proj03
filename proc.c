@@ -464,3 +464,44 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int kern_mprotect(void *addr, int len, int pid){
+    int rv = -1;
+    acquire(&ptable.lock);
+    if (pid < 0 || pid > NPROC){
+        release(&ptable.lock);
+        return rv;
+    }
+    int i;
+    for (i = 0; i <NPROC ; i++){
+        if(ptable.proc[i].state != UNUSED && ptable.proc[i].pid == pid){
+            struct proc *p = &ptable.proc[pid];
+            do_mprotect(addr, len, p);
+            rv = 0;
+            break;
+        }
+    }
+    release(&ptable.lock);
+    return rv;
+}
+
+int kern_munprotect(void *addr, int len, int pid){
+    int rv = -1;
+    acquire(&ptable.lock);
+    if (pid < 0 || pid > NPROC){
+        release(&ptable.lock);
+        return rv;
+    }
+    int i;
+    for (i = 0; i <NPROC ; i++){
+        if(ptable.proc[i].state != UNUSED && ptable.proc[i].pid == pid){
+            struct proc *p = &ptable.proc[pid];
+            do_munprotect(addr, len, p);
+            rv = 0;
+            break;
+        }
+    }
+    release(&ptable.lock);
+    return rv;
+}
+

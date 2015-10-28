@@ -377,6 +377,16 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
+void do_mprotect(void *addr, int len, struct proc *p){
+    //write the mprotect function to modify PTE_W and/or PTE_U protection bits
+    //already took care of returning 0 vs. -1 in kern_mprotect
+}
+
+void do_munprotect(void *addr, int len, struct proc *p){
+    //write the munprotect function to reset protection bits
+    //already took care of returning 0 vs. -1 in kern_munprotect
+}
+
 //PAGEBREAK!
 // Blank page.
 //PAGEBREAK!

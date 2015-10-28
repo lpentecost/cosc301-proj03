@@ -89,3 +89,21 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int
+sys_mprotect(void)
+{
+  int len;
+  void *addr;
+  //retrieve addr and len using stuff from syscall.c (argint, argptr)
+  return kern_mprotect(addr, len, proc->pid);
+}
+
+int
+sys_munprotect(void)
+{
+  int len;
+  void *addr;
+  //retrieve addr and len using stuff from syscall.c (argint, argptr)
+  return kern_munprotect(addr, len, proc->pid);
+}
