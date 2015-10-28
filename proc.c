@@ -38,7 +38,7 @@ allocproc(void)
   char *sp;
 
   acquire(&ptable.lock);
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) //allocate process starting not at first entry but at PGSIZE instead?
     if(p->state == UNUSED)
       goto found;
   release(&ptable.lock);
