@@ -380,11 +380,34 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 void do_mprotect(void *addr, int len, struct proc *p){
     //write the mprotect function to modify PTE_W and/or PTE_U protection bits
     //already took care of returning 0 vs. -1 in kern_mprotect
+
+    // look at MMU file to see how protection bits work
+    // bitwise AND & bitwise OR (pte&=1101) (pte||=0010)
+    uint vpn;
+    for (vpn = 1; vpn <= len*PGSIZE ; vpn += PGSIZE) {
+        pte_t *pte;
+        pte_t *pde = p->pgdir;
+        if ((pte = walkpgdir(pde, (void*)vpn, 0)) != 0) {
+            *pte = *pte & ~PTE_W;
+        }
+    }
+    lcr3(v2p(p->pgdir)); //invalidate corresponding TLB 
 }
 
 void do_munprotect(void *addr, int len, struct proc *p){
     //write the munprotect function to reset protection bits
     //already took care of returning 0 vs. -1 in kern_munprotect
+
+    // look at MMU file to see how protection bits work
+    // bitwise AND & bitwise OR (pte&=1101) (pte||=0010)
+    uint vpn;
+    for (vpn = 1; vpn <= len*PGSIZE ; vpn += PGSIZE) {
+        pte_t *pte;
+        pte_t *pde = p->pgdir;
+        if ((pte = walkpgdir(pde, (void*)vpn, 0)) != 0) {
+           *pte = *pte | PTE_W;
+        }
+    }
 }
 
 //PAGEBREAK!

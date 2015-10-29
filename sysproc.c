@@ -93,10 +93,17 @@ sys_uptime(void)
 int
 sys_mprotect(void)
 {
-  int len;
-  void *addr;
+    int len;
+    void *addr;
   //retrieve addr and len using stuff from syscall.c (argint, argptr)
-  return kern_mprotect(addr, len, proc->pid);
+    if(argint(1,&len)<0) {  // retrieve len 2nd arg 
+        return -1;
+    }
+    
+    if(argptr(0,(char**)&addr,4)<0) { // retrieve address, first arg ??? 4? word size?
+        return -1;
+    }
+    return kern_mprotect(addr, len, proc->pid);
 }
 
 int
@@ -105,5 +112,11 @@ sys_munprotect(void)
   int len;
   void *addr;
   //retrieve addr and len using stuff from syscall.c (argint, argptr)
-  return kern_munprotect(addr, len, proc->pid);
+    if(argint(1,&len)<0) { //retrieve len, 2nd arg
+        return -1;
+    }
+    if (argptr(0,(char**)&addr,4)<0) { // retrieve address
+        return -1;
+    }
+   return kern_munprotect(addr, len, proc->pid);
 }
