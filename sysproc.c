@@ -101,7 +101,7 @@ sys_mprotect(void)
         return -1;
     }
     
-    if(argptr(0,(char**)&addr,4)<0) { // retrieve address, first arg ??? 4? word size?
+    if(argptr(0,(char **)&addr,len*PGSIZE)<0) { // retrieve address
         return -1;
     }
     return kern_mprotect(addr, len);
@@ -116,7 +116,7 @@ sys_munprotect(void)
     if(argint(1,&len)<0) { //retrieve len, 2nd arg
         return -1;
     }
-    if (argptr(0,(char**)&addr,4)<0) { // retrieve address
+    if (argptr(0,(char **)&addr,len*PGSIZE)<0) { // retrieve address
         return -1;
     }
    return kern_munprotect(addr, len);
