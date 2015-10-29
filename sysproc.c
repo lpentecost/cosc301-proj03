@@ -93,6 +93,7 @@ sys_uptime(void)
 int
 sys_mprotect(void)
 {
+    cprintf("made it to sysproc.c sys_mprotect line 96\n");
     int len;
     void *addr;
   //retrieve addr and len using stuff from syscall.c (argint, argptr)

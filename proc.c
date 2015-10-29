@@ -466,6 +466,7 @@ procdump(void)
 }
 
 int kern_mprotect(void *addr, int len, int pid){
+    cprintf("Made it to proc.c kern_mprotect line 469 \n");
     int rv = -1;
     acquire(&ptable.lock);
     if (pid < 0 || pid > NPROC){
