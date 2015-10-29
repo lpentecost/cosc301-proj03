@@ -386,7 +386,7 @@ void do_mprotect(void *addr, int len, struct proc *p){
     // bitwise AND & bitwise OR (pte&=1101) (pte||=0010)
     cprintf("Made it to vm.c do_mprotect line 387\n");
     uint vpn;
-    for (vpn = PGSIZE; vpn < len*PGSIZE ; vpn += PGSIZE) {
+    for (vpn = PGSIZE; vpn <= len*PGSIZE ; vpn += PGSIZE) {
         pte_t *pte;
         pde_t *pde = p->pgdir;
    //     cprintf("The walkpgdir return value is %d\n", walkpgdir(pde, (void *)vpn, 0));
@@ -406,7 +406,7 @@ void do_munprotect(void *addr, int len, struct proc *p){
     // look at MMU file to see how protection bits work
     // bitwise AND & bitwise OR (pte&=1101) (pte||=0010)
     uint vpn;
-    for (vpn = 1; vpn < len*PGSIZE ; vpn += PGSIZE) {
+    for (vpn = PGSIZE; vpn <= len*PGSIZE ; vpn += PGSIZE) {
         pte_t *pte;
         pde_t *pde = p->pgdir;
         if ((pte = walkpgdir(pde, (void*)vpn, 0)) != 0) {

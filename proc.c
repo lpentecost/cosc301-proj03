@@ -465,55 +465,29 @@ procdump(void)
   }
 }
 
-int kern_mprotect(void *addr, int len, int pid){
+int kern_mprotect(void *addr, int len){
     cprintf("Made it to proc.c kern_mprotect line 469 \n");
     int rv = -1;
-    acquire(&ptable.lock);
-    if (pid < 0 || pid > NPROC){
-        release(&ptable.lock);
+    if((*(int *)addr % PGSIZE) != 0 || *(int *)addr > proc->sz || len <=0){
         return rv;
     }
-    int i;
-    for (i = 0; i <NPROC ; i++){
-        if(ptable.proc[i].state != UNUSED && ptable.proc[i].pid == pid){
-            struct proc *p = &ptable.proc[pid];
-            if((*(int *)addr % PGSIZE) != 0 || *(int *)addr > proc->sz || len <=0){
-                return rv;
-            }
-            do_mprotect(addr, len, p);
-            rv = 0;
-            break;
-        }
-    }
-    release(&ptable.lock);
+    do_mprotect(addr, len, proc);
+    rv = 0;
     return rv;
 }
 
-int kern_munprotect(void *addr, int len, int pid){
+int kern_munprotect(void *addr, int len){
     /* Need to check that :
     -address size is page-aligned (addr % (int)PGSIZE ==0)
     -addr is too large, outside process address space
     -len should be greater than 0 or (if (len <= 0) {return -1}
     */
     int rv = -1;
-    acquire(&ptable.lock);
-    if (pid < 0 || pid > NPROC){
-        release(&ptable.lock);
+    if((*(int *)addr % PGSIZE) != 0 || *(int *)addr > proc->sz || len <=0){
         return rv;
     }
-    int i;
-    for (i = 0; i <NPROC ; i++){
-        if(ptable.proc[i].state != UNUSED && ptable.proc[i].pid == pid){
-            struct proc *p = &ptable.proc[pid];
-            if((*(int *)addr % PGSIZE) != 0 || *(int *)addr > proc->sz || len <=0){
-                return rv;
-            }
-            do_munprotect(addr, len, p);
-            rv = 0;
-            break;
-        }
-    }
-    release(&ptable.lock);
+    do_munprotect(addr, len, proc);
+    rv = 0;
     return rv;
 }
 

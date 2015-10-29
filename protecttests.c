@@ -38,19 +38,25 @@ main(int argc, char *argv[])
   assert(mprotect(start, 1) == -1);
   assert(munprotect(start, 1) == -1);
 
+  printf(1, "protecttests line 41: got here\n");
   sbrk(PGSIZE * 1);
   assert(mprotect(start, 2) == -1);
+  printf(1,"protecttests line 44: got here\n");
   assert(munprotect(start, 2) == -1);
 
+  printf(1, "protecttests line 47: got here\n");
   assert(mprotect(start + 1, 1) == -1);
   assert(munprotect(start + 1, 1) == -1);
 
+  printf(1, "protecttests line 51: got here\n");
   assert(mprotect(start, 0) == -1);
   assert(munprotect(start, 0) == -1);
 
+  printf(1, "protecttests line 55: got here\n");
   assert(mprotect(start, -2) == -1);
   assert(munprotect(start, -2) == -1);
 
+  printf(1, "protecttests line 59: got here\n");
   assert(mprotect(start, 1) == 0);
   assert(munprotect(start, 1) == 0);
 

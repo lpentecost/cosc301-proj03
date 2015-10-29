@@ -181,10 +181,10 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 
 //support for added syscalls
-int kern_mprotect(void *, int, int);
+int kern_mprotect(void *, int);
 void do_mprotect(void *, int, struct proc *);
 
-int kern_munprotect(void *, int, int);
+int kern_munprotect(void *, int);
 void do_munprotect(void *, int, struct proc *);
 
 // number of elements in fixed-size array
