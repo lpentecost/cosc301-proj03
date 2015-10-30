@@ -386,13 +386,14 @@ void do_mprotect(void *addr, int len, struct proc *p){
     // bitwise AND & bitwise OR (pte&=1101) (pte||=0010)
     cprintf("Made it to vm.c do_mprotect line 387\n");
     uint vpn;
-    for (vpn = PGSIZE; vpn < len*PGSIZE ; vpn += PGSIZE) {
+    for (vpn = *(int *)addr; vpn < *(int *)addr+len*PGSIZE ; vpn += PGSIZE) {
         pte_t *pte;
         pde_t *pde = p->pgdir;
    //     cprintf("The walkpgdir return value is %d\n", walkpgdir(pde, (void *)vpn, 0));
-        if ((pte = walkpgdir(pde, (void*)vpn, 0)) != 0) {
-            cprintf("Inside if statement for pde \n");
+        if ((pte = walkpgdir(pde, (void*)vpn, 0)) != 0 && (*pte & PTE_U) == 0) {
+            cprintf("Before setting condition,  *pte is %d \n", (int)*pte);
             *pte = *pte & ~PTE_W;
+            cprintf("After setting condition, *pte is %d \n", (int)*pte);
         }
     }
     cprintf("Made it out of for loop in do_mprotect\n");
@@ -406,11 +407,13 @@ void do_munprotect(void *addr, int len, struct proc *p){
     // look at MMU file to see how protection bits work
     // bitwise AND & bitwise OR (pte&=1101) (pte||=0010)
     uint vpn;
-    for (vpn = PGSIZE; vpn < len*PGSIZE ; vpn += PGSIZE) {
+    for (vpn = *(int *)addr; vpn < *(int *)addr+len*PGSIZE ; vpn += PGSIZE) {
         pte_t *pte;
         pde_t *pde = p->pgdir;
-        if ((pte = walkpgdir(pde, (void*)vpn, 0)) != 0) {
+        if ((pte = walkpgdir(pde, (void*)vpn, 0)) != 0 && (*pte & PTE_U) == 0) { //also check *pte&PTE_U?
+           cprintf("Before setting condition, *pte is %d\n", (int)*pte);
            *pte = *pte | PTE_W;
+           cprintf("After setting condition, *pte is %d\n", (int)*pte);
         }
     }
     lcr3(v2p(p->pgdir)); //invalidate corresponding TLB 

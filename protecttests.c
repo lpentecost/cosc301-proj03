@@ -63,6 +63,9 @@ main(int argc, char *argv[])
   // protect page again to check that permissions
   // carry over on fork
   assert(mprotect(start, 1) == 0);
+  printf(1, "About to try to do something I shouldn't be able to do..\n");
+  *start = 0;
+  printf(1, "Should crash before this!!\n");
   int rv = fork();
   if (rv < 0) {
     printf(1, "Fork failed.  Oops.  This shouldn't happen, right?!\n");
